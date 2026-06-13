@@ -1,6 +1,6 @@
-# Sri Lankan 304 Card Game
+# BDVL 304 Card Game
 
-A real-time multiplayer implementation of the traditional Sri Lankan card game "304", featuring interactive audio/video WebRTC feeds, AI bot fallbacks, and a fluid responsive table UI.
+A real-time multiplayer implementation of the traditional BDVL card game "304", featuring interactive audio/video WebRTC feeds, AI bot fallbacks, and a fluid responsive table UI.
 
 ---
 
