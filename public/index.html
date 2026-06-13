@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>304 - Multiplayer Card Game</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css?v=1.0.1">
+</head>
+<body>
+    <div id="app">
+        <!-- --- LOBBY SCREEN --- -->
+        <div id="lobby-screen" class="screen active">
+            <div class="lobby-card glass">
+                <div class="lobby-header">
+                    <div class="logo">
+                        <i class="fa-solid fa-crown gold-glow"></i>
+                        <h1>304 Card Game</h1>
+                    </div>
+                    <p class="subtitle">Experience the Sri Lankan traditional multiplayer card game in real-time</p>
+                </div>
+                
+                <div class="lobby-body">
+                    <div class="input-group">
+                        <label for="username-input"><i class="fa-solid fa-user"></i> Choose Username</label>
+                        <input type="text" id="username-input" placeholder="Enter your name..." maxlength="15">
+                    </div>
+                    
+                    <div class="action-divider"><span>Create or Join a Room</span></div>
+                    
+                    <div class="lobby-actions">
+                        <div class="create-section">
+                            <button id="create-room-btn" class="btn btn-primary btn-glow">
+                                <i class="fa-solid fa-circle-plus"></i> Create New Room
+                            </button>
+                        </div>
+                        <div class="join-section">
+                            <div class="join-input-wrapper">
+                                <input type="text" id="room-id-input" placeholder="Room ID..." maxlength="8">
+                                <button id="join-room-btn" class="btn btn-secondary">
+                                    <i class="fa-solid fa-right-to-bracket"></i> Join Room
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lobby-footer">
+                    <p><i class="fa-solid fa-circle-info"></i> Requires 4 players. Add bots in the lobby if needed!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- GAME SCREEN --- -->
+        <div id="game-screen" class="screen">
+            <!-- Header bar -->
+            <header class="game-header glass">
+                <div class="game-info-left">
+                    <span class="room-badge"><i class="fa-solid fa-hashtag text-cyan"></i> Room: <strong id="display-room-id">----</strong></span>
+                    <button id="copy-room-id-btn" class="btn-icon" title="Copy Room ID"><i class="fa-solid fa-copy"></i></button>
+                </div>
+                <div class="header-logo">
+                    <i class="fa-solid fa-crown gold-glow"></i>
+                    <span>304 MULTIPLAYER</span>
+                </div>
+                <div class="game-actions-right">
+                    <button id="toggle-mic-btn" class="btn btn-control muted"><i class="fa-solid fa-microphone-slash"></i></button>
+                    <button id="toggle-cam-btn" class="btn btn-control muted"><i class="fa-solid fa-video-slash"></i></button>
+                    <button id="add-bot-btn" class="btn btn-outline"><i class="fa-solid fa-robot"></i> Add Bot</button>
+                    <button id="leave-room-btn" class="btn btn-danger btn-sm"><i class="fa-solid fa-arrow-right-from-bracket"></i> Leave</button>
+                </div>
+            </header>
+
+            <div class="game-container">
+                <!-- Sidebar Left: Scoreboard & Trump -->
+                <aside class="sidebar-left">
+                    <!-- Trump Info -->
+                    <div class="trump-card glass border-gold">
+                        <h3><i class="fa-solid fa-bolt text-gold"></i> Trump Suit</h3>
+                        <div id="trump-display-box" class="trump-display-box text-center">
+                            <span id="trump-suit-indicator" class="trump-suit-indicator hidden">?</span>
+                            <span id="trump-suit-text">HIDDEN</span>
+                        </div>
+                        <div id="trump-selection-hint" class="small-hint text-center"></div>
+                    </div>
+
+                    <!-- Scoreboard -->
+                    <div class="scoreboard-card glass">
+                        <h3><i class="fa-solid fa-trophy text-yellow"></i> Scoreboard</h3>
+                        <div class="score-team">
+                            <div class="team-meta">
+                                <span class="team-name">Team 1 <small>(P1 & P3)</small></span>
+                                <span id="golden-score-team1" class="golden-points">+0</span>
+                            </div>
+                            <div class="team-details">
+                                <span>Round points: <strong id="round-points-team1">0</strong></span>
+                                <span class="marriage-bonus">Marriage: <strong id="marriage-points-team1">+0</strong></span>
+                            </div>
+                        </div>
+                        <div class="score-divider"></div>
+                        <div class="score-team">
+                            <div class="team-meta">
+                                <span class="team-name">Team 2 <small>(P2 & P4)</small></span>
+                                <span id="golden-score-team2" class="golden-points">+0</span>
+                            </div>
+                            <div class="team-details">
+                                <span>Round points: <strong id="round-points-team2">0</strong></span>
+                                <span class="marriage-bonus">Marriage: <strong id="marriage-points-team2">+0</strong></span>
+                            </div>
+                        </div>
+                        <div class="score-footer">
+                            <span id="current-bid-badge" class="badge badge-indigo">Bid: None</span>
+                        </div>
+                    </div>
+
+                    <!-- Target / Win conditions info -->
+                    <div class="info-card glass">
+                        <h4><i class="fa-solid fa-circle-question"></i> Match Win Targets</h4>
+                        <ul class="match-targets">
+                            <li>Reach <span class="text-green font-bold">≥ +5</span> points while opponent is <span class="text-red font-bold">≥ -1</span></li>
+                            <li>OR opponent sinks to <span class="text-red font-bold">≤ -5</span> while you are <span class="text-green font-bold">≥ +1</span></li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <!-- Center Area: Square Table layout -->
+                <main class="table-area">
+                    <div class="card-table">
+                        
+                        <!-- TOP SEAT (Partner - Player 3) -->
+                        <div class="seat seat-top" id="seat-top">
+                            <div class="player-panel glass">
+                                <div class="video-container">
+                                    <video id="video-top" autoplay playsinline muted class="remote-video"></video>
+                                    <canvas id="canvas-top" class="fallback-avatar-canvas" width="200" height="150"></canvas>
+                                    <span class="mic-badge muted"><i class="fa-solid fa-microphone-slash"></i></span>
+                                </div>
+                                <div class="player-info">
+                                    <span class="dealer-badge" id="dealer-top">D</span>
+                                    <span class="player-name-text" id="name-top">Waiting...</span>
+                                    <span class="player-cards-count" id="cards-count-top"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LEFT SEAT (Opponent 1 - Player 2) -->
+                        <div class="seat seat-left" id="seat-left">
+                            <div class="player-panel glass">
+                                <div class="video-container">
+                                    <video id="video-left" autoplay playsinline class="remote-video"></video>
+                                    <canvas id="canvas-left" class="fallback-avatar-canvas" width="200" height="150"></canvas>
+                                    <span class="mic-badge muted"><i class="fa-solid fa-microphone-slash"></i></span>
+                                </div>
+                                <div class="player-info">
+                                    <span class="dealer-badge" id="dealer-left">D</span>
+                                    <span class="player-name-text" id="name-left">Waiting...</span>
+                                    <span class="player-cards-count" id="cards-count-left"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CENTER TRICK PILE & GAME STATS -->
+                        <div class="table-center glass-card">
+                            <div class="trick-slots">
+                                <!-- Card played by Top -->
+                                <div class="trick-card-slot slot-top" id="played-card-top"></div>
+                                <!-- Card played by Left -->
+                                <div class="trick-card-slot slot-left" id="played-card-left"></div>
+                                <!-- Card played by Right -->
+                                <div class="trick-card-slot slot-right" id="played-card-right"></div>
+                                <!-- Card played by Bottom -->
+                                <div class="trick-card-slot slot-bottom" id="played-card-bottom"></div>
+                            </div>
+                            
+                            <!-- Middle Status Info -->
+                            <div class="center-status">
+                                <div class="turn-indicator" id="center-turn-indicator">Waiting for players...</div>
+                                <div class="round-number-text" id="center-round-text">Round --</div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT SEAT (Opponent 2 - Player 4) -->
+                        <div class="seat seat-right" id="seat-right">
+                            <div class="player-panel glass">
+                                <div class="video-container">
+                                    <video id="video-right" autoplay playsinline class="remote-video"></video>
+                                    <canvas id="canvas-right" class="fallback-avatar-canvas" width="200" height="150"></canvas>
+                                    <span class="mic-badge muted"><i class="fa-solid fa-microphone-slash"></i></span>
+                                </div>
+                                <div class="player-info">
+                                    <span class="dealer-badge" id="dealer-right">D</span>
+                                    <span class="player-name-text" id="name-right">Waiting...</span>
+                                    <span class="player-cards-count" id="cards-count-right"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BOTTOM SEAT (Self - Player 1) -->
+                        <div class="seat seat-bottom" id="seat-bottom">
+                            <div class="player-panel glass current-player-glow">
+                                <div class="video-container">
+                                    <video id="video-bottom" autoplay playsinline muted class="local-video"></video>
+                                    <canvas id="canvas-bottom" class="fallback-avatar-canvas" width="200" height="150"></canvas>
+                                </div>
+                                <div class="player-info">
+                                    <span class="dealer-badge" id="dealer-bottom">D</span>
+                                    <span class="player-name-text" id="name-bottom">Me</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+
+                <!-- Sidebar Right: Live Game Logs -->
+                <aside class="sidebar-right">
+                    <div class="logs-card glass">
+                        <h3><i class="fa-solid fa-scroll text-cyan"></i> Live Logs</h3>
+                        <div class="logs-container" id="logs-container">
+                            <div class="log-entry">Waiting to connect...</div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive controls for the current player's actions -->
+                    <div class="controls-panel glass">
+                        <h3><i class="fa-solid fa-sliders text-indigo"></i> Controls</h3>
+                        
+                        <div class="marriage-controls" id="marriage-controls-panel">
+                            <button id="show-marriage-btn" class="btn btn-gold btn-block hidden">
+                                <i class="fa-solid fa-ring"></i> Show Marriage
+                            </button>
+                        </div>
+                        
+                        <div class="turn-actions" id="turn-actions-panel">
+                            <span class="no-actions-text">Wait for your turn...</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+        </div>
+
+        <!-- Current Player's Cards Hand (Pinned at the very bottom center) -->
+        <footer class="player-hand-container hidden">
+            <div class="hand-wrapper" id="player-hand">
+                <!-- Cards will be dynamically rendered here -->
+            </div>
+        </footer>
+        
+        <!-- --- MODAL OVERLAYS --- -->
+
+        <!-- 1. Bidding Modal -->
+        <div id="bidding-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2><i class="fa-solid fa-gavel text-cyan"></i> Place Your Bid ("Aata")</h2>
+                <p class="modal-desc">Bids are counter-clockwise. You must outbid the current highest bid.</p>
+                <div class="current-bid-info">
+                    Current Highest Bid: <span id="modal-highest-bid" class="badge badge-gold">None</span>
+                </div>
+                <div class="bid-buttons-grid" id="bid-buttons-grid">
+                    <!-- Bidding buttons generated dynamically -->
+                </div>
+                <div class="modal-actions">
+                    <button id="pass-bid-btn" class="btn btn-danger btn-block">Pass</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Secret Trump Suit Selection Modal (Standard Bid) -->
+        <div id="trump-select-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2><i class="fa-solid fa-mask text-gold"></i> Choose Trump Suit Secretly</h2>
+                <p class="modal-desc">Select one of your first 3 cards. The suit of this card will become the "Turpu" (Trump suit).</p>
+                <div class="trump-cards-row" id="trump-cards-row">
+                    <!-- First 3 cards will render here for selection -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Chance Bid Face-Down Trump Selection Modal -->
+        <div id="chance-select-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2><i class="fa-solid fa-circle-question text-cyan"></i> Select Chance Trump</h2>
+                <p class="modal-desc">Select one of your 3 new cards face-down. This card will determine the Trump suit.</p>
+                <div class="chance-cards-row" id="chance-cards-row">
+                    <div class="card-back-selection" data-index="0">?</div>
+                    <div class="card-back-selection" data-index="1">?</div>
+                    <div class="card-back-selection" data-index="2">?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Vakkai Call Override Modal -->
+        <div id="vakkai-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2><i class="fa-solid fa-circle-exclamation text-red font-bold animate-pulse"></i> Vakkai Call Window</h2>
+                <p class="modal-desc">Would you like to override the current bid and call Vakkai?</p>
+                <div class="vakkai-warning">
+                    ⚠️ <strong>Vakkai rules:</strong> You must win all 6 tricks completely alone. Partner sabotage applies!
+                </div>
+                <div class="modal-actions-row">
+                    <button id="call-vakkai-btn" class="btn btn-danger btn-glow">Call Vakkai</button>
+                    <button id="decline-vakkai-btn" class="btn btn-secondary">No Vakkai</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Kotu Decision Modal -->
+        <div id="kotu-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2><i class="fa-solid fa-fire text-red animate-pulse"></i> Call Kotu?</h2>
+                <p class="modal-desc">Your team won all 5 tricks. Will you call Kotu for the final trick?</p>
+                <div class="kotu-warning">
+                    Winner of Trick 6 gets +2 Golden Points instead of +1. Failure penalizes you -1 Golden Point.
+                </div>
+                <div class="modal-actions-row">
+                    <button id="call-kotu-btn" class="btn btn-glow-gold">Call Kotu (Double or Nothing)</button>
+                    <button id="decline-kotu-btn" class="btn btn-secondary">Play Normally</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Round End / Summary Modal -->
+        <div id="round-end-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2 id="round-end-title">Round Summary</h2>
+                <p id="round-end-outcome" class="modal-desc"></p>
+                <div class="round-stats-grid">
+                    <div class="stat-column">
+                        <h3>Team 1 Score</h3>
+                        <div id="round-end-score-team1" class="score-bubble">0</div>
+                    </div>
+                    <div class="stat-column">
+                        <h3>Team 2 Score</h3>
+                        <div id="round-end-score-team2" class="score-bubble">0</div>
+                    </div>
+                </div>
+                <div class="modal-actions mt-4">
+                    <button id="next-round-btn" class="btn btn-primary btn-block">Next Round</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Game Over / Victory Modal -->
+        <div id="game-over-modal" class="modal-overlay">
+            <div class="modal-content glass text-center border-gold">
+                <div class="trophy-wrapper animate-bounce">
+                    <i class="fa-solid fa-trophy text-gold" style="font-size: 4rem;"></i>
+                </div>
+                <h1 id="game-over-title">Victory!</h1>
+                <p id="game-over-desc" class="modal-desc"></p>
+                <div class="modal-actions mt-4">
+                    <button id="restart-game-btn" class="btn btn-primary btn-block btn-glow">Restart Match</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Ready Check Modal -->
+        <div id="ready-modal" class="modal-overlay">
+            <div class="modal-content glass text-center">
+                <h2><i class="fa-solid fa-circle-check text-green font-bold"></i> Ready Check Phase</h2>
+                <p class="modal-desc">All players must ready up before the match begins.</p>
+                <div class="ready-players-list" id="ready-players-list">
+                    <!-- List of players and their ready status -->
+                </div>
+                <div class="modal-actions mt-4">
+                    <button id="ready-btn" class="btn btn-primary btn-block btn-glow">I'm Ready</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main JS Application script -->
+    <script src="app.js?v=1.0.2"></script>
+</body>
+</html>
