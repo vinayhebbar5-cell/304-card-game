@@ -11,7 +11,7 @@
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style -->
-    <link rel="stylesheet" href="style.css?v=1.0.5">
+    <link rel="stylesheet" href="style.css?v=1.0.6">
 </head>
 <body>
     <div id="app">
@@ -24,6 +24,7 @@
                         <h1>304 Card Game</h1>
                     </div>
                     <p class="subtitle">Experience the Sri Lankan traditional multiplayer card game in real-time</p>
+                    <button id="open-rules-btn" class="btn btn-outline btn-sm" style="margin-top: -10px; margin-bottom: 20px; width: auto;"><i class="fa-solid fa-book-open"></i> How to Play & Rules</button>
                 </div>
                 
                 <div class="lobby-body">
@@ -72,8 +73,8 @@
                 <div class="game-actions-right">
                     <button id="toggle-mic-btn" class="btn btn-control muted"><i class="fa-solid fa-microphone-slash"></i></button>
                     <button id="toggle-cam-btn" class="btn btn-control muted"><i class="fa-solid fa-video-slash"></i></button>
-                    <button id="add-bot-btn" class="btn btn-outline"><i class="fa-solid fa-robot"></i> Add Bot</button>
-                    <button id="leave-room-btn" class="btn btn-danger btn-sm"><i class="fa-solid fa-arrow-right-from-bracket"></i> Leave</button>
+                    <button id="add-bot-btn" class="btn btn-outline"><i class="fa-solid fa-robot"></i> <span class="hide-mobile">Add Bot</span></button>
+                    <button id="leave-room-btn" class="btn btn-danger btn-sm"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="hide-mobile">Leave</span></button>
                 </div>
             </header>
 
@@ -375,9 +376,119 @@
             </div>
         </div>
 
+        <!-- 9. Game Rules / How to Play Modal -->
+        <div id="rules-modal" class="modal-overlay">
+            <div class="modal-content glass rules-modal-content">
+                <button id="rules-close-x" class="modal-close-x">&times;</button>
+                <h2><i class="fa-solid fa-book-open text-cyan"></i> How to Play & Rules</h2>
+                <div class="rules-scroll-area">
+                    <p class="rules-section-title">Objective</p>
+                    <p class="rules-text">Team up with your partner (opposite seat) to win tricks and achieve your bidding target, or hold the opponents below theirs. The first team to reach <strong>+5 Golden Points</strong> wins the match!</p>
+                    
+                    <p class="rules-section-title">Card Rankings & Points</p>
+                    <table class="rules-table">
+                        <thead>
+                            <tr>
+                                <th>Card</th>
+                                <th>Points</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Jack (J)</strong></td>
+                                <td>3 pts</td>
+                                <td>1st (Highest)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>9</strong></td>
+                                <td>2 pts</td>
+                                <td>2nd</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ace (A)</strong></td>
+                                <td>1 pt</td>
+                                <td>3rd</td>
+                            </tr>
+                            <tr>
+                                <td><strong>10</strong></td>
+                                <td>1 pt</td>
+                                <td>4th</td>
+                            </tr>
+                            <tr>
+                                <td><strong>King (K)</strong></td>
+                                <td>0 pts</td>
+                                <td>5th</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Queen (Q)</strong></td>
+                                <td>0 pts</td>
+                                <td>6th (Lowest)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p class="rules-section-title">Bidding Targets</p>
+                    <p class="rules-text">Players bid counter-clockwise based on their first 3 cards. The bidder's team must hold the opponents below the target limit:</p>
+                    <table class="rules-table">
+                        <thead>
+                            <tr>
+                                <th>Bid Level</th>
+                                <th>Opponent Target Limit</th>
+                                <th>Your Team Minimum Needed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Chance</strong></td>
+                                <td>&lt; 11 pts</td>
+                                <td>&ge; 22 pts</td>
+                            </tr>
+                            <tr>
+                                <td><strong>200</strong></td>
+                                <td>&lt; 10 pts</td>
+                                <td>&ge; 23 pts</td>
+                            </tr>
+                            <tr>
+                                <td><strong>10</strong></td>
+                                <td>&lt; 9 pts</td>
+                                <td>&ge; 24 pts</td>
+                            </tr>
+                            <tr>
+                                <td><strong>20</strong></td>
+                                <td>&lt; 8 pts</td>
+                                <td>&ge; 25 pts</td>
+                            </tr>
+                            <tr>
+                                <td><strong>30</strong></td>
+                                <td>&lt; 7 pts</td>
+                                <td>&ge; 26 pts</td>
+                            </tr>
+                            <tr>
+                                <td><strong>40</strong></td>
+                                <td>&lt; 6 pts</td>
+                                <td>&ge; 27 pts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p class="rules-section-title">Special Mechanics</p>
+                    <ul class="rules-list">
+                        <li><strong>Secret Trump:</strong> The bid winner secretly picks the Trump card from their hand. It is revealed on Trick 1.</li>
+                        <li><strong>Marriages:</strong> King & Queen of the same suit. Shown after winning your team's first trick. Trump marriage adds <strong>+4 pts</strong>; other marriage adds <strong>+2 pts</strong> (directly subtracted from opponent's score). Playing either K or Q beforehand breaks the marriage.</li>
+                        <li><strong>Vakkai (Solo Contract):</strong> Overrides all bids. Caller must win all 6 tricks alone. If the partner wins a trick or plays a higher card (Partner Sabotage), the contract fails. Wins or loses <strong>3 Golden Points</strong>.</li>
+                        <li><strong>Kotu:</strong> If one team sweeps the first 5 tricks, the Trick 6 leader can call Kotu. Sweeping the final trick adds <strong>+2 Golden Points</strong> (or subtracts 2 from opponents). Failure penalizes you <strong>-1 Golden Point</strong>.</li>
+                    </ul>
+                    <div class="modal-actions mt-4">
+                        <button id="close-rules-btn" class="btn btn-secondary btn-block">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Main JS Application script -->
-    <script src="app.js?v=1.0.2"></script>
+    <script src="app.js?v=1.0.6"></script>
 </body>
 </html>

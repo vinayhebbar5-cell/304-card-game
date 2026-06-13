@@ -63,6 +63,10 @@ const gameOverModal = document.getElementById("game-over-modal");
 const readyModal = document.getElementById("ready-modal");
 const readyPlayersList = document.getElementById("ready-players-list");
 const readyBtn = document.getElementById("ready-btn");
+const openRulesBtn = document.getElementById("open-rules-btn");
+const rulesModal = document.getElementById("rules-modal");
+const closeRulesBtn = document.getElementById("close-rules-btn");
+const closeRulesXBtn = document.getElementById("rules-close-x");
 
 // Action Containers
 const showMarriageBtn = document.getElementById("show-marriage-btn");
@@ -980,6 +984,27 @@ restartGameBtn.addEventListener("click", () => {
 readyBtn.addEventListener("click", () => {
     sendMsg({ type: "player_ready" });
 });
+
+// Rules Modal Actions
+if (openRulesBtn && rulesModal && closeRulesBtn) {
+    openRulesBtn.addEventListener("click", () => {
+        rulesModal.classList.add("active");
+    });
+    closeRulesBtn.addEventListener("click", () => {
+        rulesModal.classList.remove("active");
+    });
+    if (closeRulesXBtn) {
+        closeRulesXBtn.addEventListener("click", () => {
+            rulesModal.classList.remove("active");
+        });
+    }
+    // Close when clicking outside of rules-modal-content
+    rulesModal.addEventListener("click", (e) => {
+        if (e.target === rulesModal) {
+            rulesModal.classList.remove("active");
+        }
+    });
+}
 
 // --- Dynamic Scaling Engine ---
 function resizeTable() {

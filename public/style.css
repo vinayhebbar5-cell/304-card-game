@@ -886,7 +886,7 @@ h1, h2, h3, h4, .logo {
     height: 100vh;
     background: rgba(11, 12, 16, 0.4);
     backdrop-filter: blur(2px);
-    z-index: 100;
+    z-index: 200;
     justify-content: center;
     align-items: center;
 }
@@ -1166,69 +1166,175 @@ h1, h2, h3, h4, .logo {
         overflow: hidden;
     }
     
+    /* Compact game header for mobile */
+    .game-header {
+        padding: 8px 12px;
+        height: 52px;
+    }
+    
+    .header-logo {
+        display: none; /* Hide wordy text logo on mobile */
+    }
+    
+    .room-badge {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+    
+    .btn-icon {
+        padding: 4px;
+        font-size: 0.8rem;
+    }
+    
+    .game-actions-right {
+        gap: 6px;
+    }
+    
+    .btn-control {
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+    
+    #add-bot-btn, #leave-room-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+    
     .game-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 70px); /* Fill space minus header */
+        height: calc(100vh - 52px); /* Fill space minus header */
         padding: 8px;
+        padding-bottom: 100px; /* Leave exactly 100px room for player hand container */
         gap: 8px;
         overflow: hidden; /* Prevent vertical scrolling */
     }
     
-    /* 2. Top row for Scoreboard and Trump card side-by-side */
+    /* 2. Top row slim Scoreboard and Trump card bar */
     .sidebar-left {
+        display: flex;
         flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
         width: 100%;
         height: auto;
-        gap: 8px;
+        padding: 6px 10px;
+        background: rgba(31, 40, 51, 0.4);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        gap: 12px;
         flex-shrink: 0;
     }
     
     .trump-card, .scoreboard-card {
-        flex: 1;
-        padding: 8px;
-        margin-bottom: 0;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: initial !important;
     }
     
     .trump-card h3, .scoreboard-card h3 {
-        font-size: 0.8rem;
-        margin-bottom: 6px;
-        padding-bottom: 4px;
+        display: none !important; /* Hide headings */
     }
     
     .trump-display-box {
-        padding: 8px;
-        font-size: 1.5rem;
+        background: none !important;
+        padding: 0 !important;
+        font-size: 0.85rem !important;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 700;
+    }
+    
+    #trump-suit-indicator {
+        font-size: 1rem;
+    }
+    
+    .scoreboard-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        flex: 1 !important;
+        justify-content: flex-end;
+    }
+    
+    .score-team {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0 !important;
     }
     
     .team-meta {
-        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-bottom: 0 !important;
     }
     
     .team-name {
-        font-size: 0.75rem;
+        font-size: 0.75rem !important;
+        font-weight: 700;
     }
     
-    .golden-points {
-        font-size: 0.75rem;
-        padding: 1px 4px;
+    .team-name small {
+        display: none !important; /* Hide P1 & P3 subtext */
     }
     
     .team-details {
-        font-size: 0.7rem;
+        font-size: 0.75rem !important;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        color: var(--text-light) !important;
+    }
+    
+    /* Using CSS trick to hide the word label 'Round points:' but keep values */
+    .team-details span {
+        font-size: 0 !important;
+    }
+    .team-details strong {
+        font-size: 0.75rem !important;
+        color: var(--primary);
+    }
+    
+    /* Format score as '(N pts)' concisely */
+    .team-details strong::before {
+        content: " (";
+        font-size: 0.75rem !important;
+        color: var(--text-muted);
+    }
+    .team-details strong::after {
+        content: " pts)";
+        font-size: 0.75rem !important;
+        color: var(--text-muted);
+    }
+    
+    .marriage-bonus {
+        display: none !important; /* Hide marriage bonus on mobile scoreboard */
     }
     
     .score-divider {
-        margin: 4px 0;
+        display: none !important;
     }
     
     .score-footer {
-        margin-top: 4px;
+        margin-top: 0 !important;
     }
     
-    .badge {
-        padding: 2px 6px;
-        font-size: 0.65rem;
+    #current-bid-badge {
+        font-size: 0.7rem !important;
+        padding: 2px 6px !important;
     }
     
     .info-card {
@@ -1251,52 +1357,49 @@ h1, h2, h3, h4, .logo {
         transform: scale(var(--table-scale, 1));
     }
     
-    /* 6. Bottom row for Controls and Logs side-by-side - compact height */
+    /* 6. Floating Controls on mobile (hide logs card entirely) */
     .sidebar-right {
-        flex-direction: row;
-        width: 100%;
+        position: absolute;
+        bottom: 110px;
+        right: 16px;
+        width: auto;
         height: auto;
-        gap: 8px;
-        margin-bottom: 95px; /* Compact gap to prevent overlap with player hand */
-        flex-shrink: 0;
+        margin-bottom: 0 !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        pointer-events: none; /* Let clicks pass through empty spaces */
+        z-index: 120;
     }
     
     .logs-card {
-        flex: 1;
-        padding: 6px;
-        min-height: 80px;
-        height: 80px;
-    }
-    
-    .logs-container {
-        height: 55px;
-        gap: 3px;
-    }
-    
-    .log-entry {
-        padding: 3px 6px;
-        font-size: 0.65rem;
+        display: none !important;
     }
     
     .controls-panel {
-        flex: 1;
-        padding: 6px;
-        height: 80px;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        height: auto !important;
+        width: auto !important;
+        pointer-events: auto; /* Enable clicks on buttons */
     }
     
     .controls-panel h3 {
-        font-size: 0.8rem;
-        margin-bottom: 6px;
-        padding-bottom: 4px;
+        display: none !important; /* Hide controls heading */
     }
     
-    .no-actions-text {
-        font-size: 0.75rem;
-        padding: 4px 0;
+    .turn-actions {
+        display: none !important; /* Hide turn badges, redundant on mobile */
     }
     
-    .turn-actions .badge {
-        font-size: 0.7rem;
+    #show-marriage-btn {
+        width: auto !important;
+        padding: 10px 16px !important;
+        font-size: 0.85rem !important;
+        border-radius: 20px !important;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
     }
     
     /* 7. Player Hand Overlapping Cards */
@@ -1316,7 +1419,7 @@ h1, h2, h3, h4, .logo {
     .hand-wrapper .game-card {
         width: 52px;
         height: 76px;
-        margin-left: -14px; /* Overlap cards */
+        margin-left: -18px; /* Slightly tighter overlap for mobile */
         box-shadow: -4px 0 8px rgba(0, 0, 0, 0.3);
     }
     
@@ -1417,6 +1520,22 @@ h1, h2, h3, h4, .logo {
     .lobby-card {
         padding: 24px 16px; /* More compact lobby card on mobile */
     }
+
+    /* Rules modal mobile layout adjustments */
+    .rules-modal-content {
+        max-width: 100%;
+        max-height: 95vh;
+        padding: 20px 16px;
+    }
+    
+    .rules-scroll-area {
+        max-height: 60vh;
+    }
+    
+    .rules-table th, .rules-table td {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
 }
 
 /* Micro-screen scaling queries */
@@ -1434,8 +1553,8 @@ h1, h2, h3, h4, .logo {
     }
 }
 
-/* Short-screen optimizations to prevent vertical overflow and overlaps */
-@media (max-height: 600px) {
+/* Desktop-only short-screen optimizations to prevent vertical overflow and overlaps */
+@media (min-width: 769px) and (max-height: 600px) {
     .modal-overlay {
         align-items: flex-start;
         padding-top: 15px;
@@ -1467,7 +1586,7 @@ h1, h2, h3, h4, .logo {
     }
 }
 
-@media (max-height: 550px) {
+@media (min-width: 769px) and (max-height: 550px) {
     .logs-card {
         display: none !important;
     }
@@ -1489,4 +1608,141 @@ h1, h2, h3, h4, .logo {
         padding: 2px 0 !important;
         font-size: 0.75rem;
     }
+}
+
+/* Micro-viewport narrow buttons wrapper */
+@media (max-width: 480px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* --- RULES MODAL GENERAL STYLING --- */
+.rules-modal-content {
+    max-width: 600px; /* Wider to fit tables on desktop */
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh; /* Do not exceed viewport height */
+    position: relative; /* For Close X absolute positioning */
+}
+
+.rules-scroll-area {
+    overflow-y: auto;
+    max-height: 65vh;
+    padding-right: 8px;
+    margin-top: 15px;
+    text-align: left;
+}
+
+/* Custom scrollbar for rules-scroll-area */
+.rules-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+.rules-scroll-area::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+.rules-scroll-area::-webkit-scrollbar-thumb {
+    background: rgba(102, 252, 241, 0.3);
+    border-radius: 3px;
+}
+.rules-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 252, 241, 0.5);
+}
+
+.rules-section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 20px 0 10px 0;
+    border-bottom: 1px solid rgba(102, 252, 241, 0.2);
+    padding-bottom: 4px;
+}
+
+.rules-section-title:first-of-type {
+    margin-top: 0;
+}
+
+.rules-text {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.rules-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    background: rgba(11, 12, 16, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.rules-table th, .rules-table td {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.rules-table th {
+    background: rgba(102, 252, 241, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.rules-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+}
+
+.rules-table tr:last-child td {
+    border-bottom: none;
+}
+
+.rules-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+.rules-list li {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    padding-left: 18px;
+    position: relative;
+    color: var(--text-light);
+}
+
+.rules-list li::before {
+    content: "✦";
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    font-size: 0.8rem;
+    top: 0;
+}
+
+/* Close X button style on rules modal */
+.modal-close-x {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: var(--transition-fast);
+    z-index: 10;
+}
+
+.modal-close-x:hover {
+    color: var(--primary);
 }
