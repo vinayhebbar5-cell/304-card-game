@@ -855,6 +855,9 @@ function connectWebSocket() {
             
             // Setup Web Audio and Video Fallback
             await initMediaStream();
+            
+            // Trigger layout scaling once elements become visible
+            setTimeout(resizeTable, 80);
         } else if (msg.type === "state_update") {
             updateRoomState(msg);
         } else if (msg.type === "webrtc_signal") {
@@ -977,6 +980,37 @@ restartGameBtn.addEventListener("click", () => {
 readyBtn.addEventListener("click", () => {
     sendMsg({ type: "player_ready" });
 });
+
+// --- Dynamic Scaling Engine ---
+function resizeTable() {
+    const tableArea = document.querySelector(".table-area");
+    const cardTable = document.querySelector(".card-table");
+    if (!tableArea || !cardTable) return;
+    
+    // We add small safety paddings (10px on each side)
+    const availableWidth = tableArea.clientWidth - 20;
+    const availableHeight = tableArea.clientHeight - 20;
+    
+    // Bounding dimensions including seat overhang (desktop table is 600x500)
+    // Left/right seats overhang by ~80px on each side, top/bottom overhang by ~40px
+    const baseWidth = 760;
+    const baseHeight = 580;
+    
+    const scaleX = availableWidth / baseWidth;
+    const scaleY = availableHeight / baseHeight;
+    
+    // Pick the smaller scale factor to ensure no overflow on either axis
+    let scale = Math.min(scaleX, scaleY);
+    
+    // Clamp values: max 1.0 (no scaling up past default), min 0.4 (keep text readable)
+    scale = Math.min(1.0, scale);
+    scale = Math.max(0.4, scale);
+    
+    cardTable.style.setProperty("--table-scale", scale);
+}
+
+// Window resizing updates the scale immediately
+window.addEventListener("resize", resizeTable);
 
 // Connect to Websocket server automatically
 connectWebSocket();
